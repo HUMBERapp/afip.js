@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:      
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Install
+        run: |
+          npm install
+          npm run build
+  publish-package:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://npm.pkg.github.com/
+          scope: '@humberapp'
+      - run: npm install
+      - run: git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com" && git config --global user.name "$GITHUB_ACTOR"      
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
