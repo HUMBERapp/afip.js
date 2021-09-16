@@ -6,22 +6,7 @@
   "scripts": {
     "test": "echo \"No test specified\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AfipSDK/afip.js"
-  },
-  "keywords": [
-    "web-service",
-    "factura-electronica",
-    "padron",
-    "afip"
-  ],
-  "author": "AfipSDK <afipsdk@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/AfipSDK/afip.js/issues"
-  },
-  "homepage": "https://github.com/AfipSDK/afip.js#readme",
   "dependencies": {
     "node-forge": "^0.10.0",
     "soap": "^0.24.0",
