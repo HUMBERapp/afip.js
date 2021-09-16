@@ -19,6 +19,8 @@ const RegisterScopeFour = require('./Class/RegisterScopeFour');
 const RegisterScopeFive = require('./Class/RegisterScopeFive');
 const RegisterScopeTen = require('./Class/RegisterScopeTen');
 const RegisterScopeThirteen = require('./Class/RegisterScopeThirteen');
+const RegisterCartaPorte = require('./Class/RegisterCartaPorte');
+const RegisterCTG = require('./Class/RegisterCTG');
 
 /**
  * Software Development Kit for AFIP web services
@@ -114,6 +116,8 @@ function Afip(options = {}){
 	this.RegisterInscriptionProof 	= new RegisterScopeFive(this);
 	this.RegisterScopeTen 			= new RegisterScopeTen(this);
 	this.RegisterScopeThirteen 		= new RegisterScopeThirteen(this);
+	this.RegisterCartaPorte 		= new RegisterCartaPorte(this);
+	this.RegisterCTG 		= new RegisterCTG(this);
 }
 
 /**
