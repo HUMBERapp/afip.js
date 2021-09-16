@@ -1,5 +1,5 @@
 {
-  "name": "@afipsdk/afip.js",
+  "name": "@humberapp/afip.js",
   "version": "0.7.2",
   "description": "Libreria para usar los Web Services de AFIP con JavaScript",
   "main": "src/Afip.js",
