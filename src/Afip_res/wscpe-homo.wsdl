@@ -938,7 +938,7 @@
         
       <xsd:element maxOccurs="1" minOccurs="1" name="cartaPorte" type="tns:CartaPorte">
         </xsd:element>
-
+        
         
       <xsd:element maxOccurs="1" minOccurs="1" name="transporte" type="tns:TransporteFerroviariaModificaSolicitud">
         </xsd:element>
@@ -1481,7 +1481,7 @@
         
       <xsd:element maxOccurs="1" minOccurs="1" name="cartaPorte" type="tns:CartaPorte">
         </xsd:element>
-
+        
         
       <xsd:element maxOccurs="1" minOccurs="1" name="transporte" type="tns:TransporteAutomotorModificaSolicitud">
         </xsd:element>
@@ -1908,7 +1908,11 @@
     <xsd:sequence>
         
         
-      <xsd:element maxOccurs="1" minOccurs="1" name="planta" type="tns:NumeroPlanta">
+      <xsd:element maxOccurs="1" minOccurs="1" name="perfil" type="tns:SolicitanteDestino">
+        </xsd:element>
+        
+        
+      <xsd:element maxOccurs="1" minOccurs="0" name="planta" type="tns:NumeroPlanta">
         </xsd:element>
         
     </xsd:sequence>
@@ -2956,6 +2960,12 @@
             
       <xsd:maxInclusive value="99999.99"/>
             
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="SolicitanteDestino">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="S"/>
+      <xsd:enumeration value="D"/>
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:element name="DummyResp" type="tns:DummyResponse">
