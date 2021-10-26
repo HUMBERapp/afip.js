@@ -82,9 +82,10 @@ module.exports = class AfipWebService {
 		}
 
 		// Call to SOAP method
-		let [ result ] = await this.soapClient[operation+'Async'](params);
+		let response = await this.soapClient[operation+'Async'](params);
+		//console.log("results", response);
 		
 		//Return response parsed as JSON
-		return result;
+		return response[0];
 	}
 }

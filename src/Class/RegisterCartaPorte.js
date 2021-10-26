@@ -55,6 +55,20 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 		return this.executeRequest('consultarLocalidadesPorProvincia', params);
 	}
 
+	async getCitiesByProducer(cuitProductor) {
+		let { token, sign } = await this.afip.GetServiceTA('wscpe');
+		const headers = {
+			token, sign, cuitRepresentada: this.afip.CUIT
+		}
+		const params = {
+			auth: headers,
+			solicitud: {
+				cuit: cuitProductor
+			},
+		}
+		return this.executeRequest('consultarLocalidadesProductor', params);
+	}
+
 	async getGrainTypes() {
 		let { token, sign } = await this.afip.GetServiceTA('wscpe');
 		const headers = {
@@ -69,7 +83,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 	async getLastOrderNumber(data) {
 		let { token, sign } = await this.afip.GetServiceTA('wscpe');
 		const headers = {
-			token, sign, cuitRepresentada: this.afip.CUIT
+			token, sign, cuitRepresentada: "20273103830"
 		}
 		const params = {
 			auth: headers,
@@ -81,7 +95,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
     async createCPE(data) {
         let { token, sign } = await this.afip.GetServiceTA('wscpe');
         const headers = {
-			token, sign, cuitRepresentada: this.afip.CUIT
+			token, sign, cuitRepresentada: "20273103830"
 		}
 		const params = {
 			auth: headers,
@@ -93,7 +107,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 	async anularCPE(data) {
         let { token, sign } = await this.afip.GetServiceTA('wscpe');
         const headers = {
-			token, sign, cuitRepresentada: this.afip.CUIT
+			token, sign, cuitRepresentada: "20273103830"
 		}
 		const params = {
 			auth: headers,
@@ -114,8 +128,19 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 		return this.executeRequest('consultarCPEAutomotor', params);
     }
 
+	async consultarCPEPendientesDeResolucion(data) {
+        let { token, sign } = await this.afip.GetServiceTA('wscpe');
+        const headers = {
+			token, sign, cuitRepresentada: this.afip.CUIT
+		}
+		const params = {
+			auth: headers,
+			solicitud: data,
+		}
+		return this.executeRequest('consultarCPEPPendientesDeResolucion', params);
+    }
+
 	async consultarPlantas({ cuit }) {
-		console.log("acá");
         let { token, sign } = await this.afip.GetServiceTA('wscpe');
         const headers = {
 			token, sign, cuitRepresentada: this.afip.CUIT

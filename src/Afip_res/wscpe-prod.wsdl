@@ -940,10 +940,6 @@
         </xsd:element>
         
         
-      <xsd:element maxOccurs="1" minOccurs="0" name="destinatario" type="tns:DestinatarioRegresoOrigenSolicitud">
-        </xsd:element>
-        
-        
       <xsd:element maxOccurs="1" minOccurs="1" name="transporte" type="tns:TransporteFerroviariaModificaSolicitud">
         </xsd:element>
         
@@ -978,7 +974,7 @@
     <xsd:sequence>
         
         
-      <xsd:element maxOccurs="1" minOccurs="1" name="cuitSolicitante" type="tns:CUIT">
+      <xsd:element maxOccurs="1" minOccurs="0" name="cuitSolicitante" type="tns:CUIT">
         </xsd:element>
         
         
@@ -1487,10 +1483,6 @@
         </xsd:element>
         
         
-      <xsd:element maxOccurs="1" minOccurs="0" name="destinatario" type="tns:DestinatarioRegresoOrigenSolicitud">
-        </xsd:element>
-        
-        
       <xsd:element maxOccurs="1" minOccurs="1" name="transporte" type="tns:TransporteAutomotorModificaSolicitud">
         </xsd:element>
         
@@ -1665,6 +1657,10 @@
         
         
       <xsd:element maxOccurs="1" minOccurs="0" name="pesoTara" type="xsd:int">
+        </xsd:element>
+        
+        
+      <xsd:element maxOccurs="1" minOccurs="0" name="cosecha" type="xsd:int">
         </xsd:element>
         
     </xsd:sequence>
@@ -1912,7 +1908,11 @@
     <xsd:sequence>
         
         
-      <xsd:element maxOccurs="1" minOccurs="1" name="planta" type="tns:NumeroPlanta">
+      <xsd:element maxOccurs="1" minOccurs="1" name="perfil" type="tns:SolicitanteDestino">
+        </xsd:element>
+        
+        
+      <xsd:element maxOccurs="1" minOccurs="0" name="planta" type="tns:NumeroPlanta">
         </xsd:element>
         
     </xsd:sequence>
@@ -1945,12 +1945,23 @@
       <xsd:element maxOccurs="1" minOccurs="1" name="cuit" type="tns:CUIT">
         </xsd:element>
         
+    </xsd:sequence>
+  </xsd:complexType>
         
-      <xsd:element maxOccurs="1" minOccurs="1" name="codProvincia" type="xsd:int">
+  <xsd:complexType name="PlantaResponse">
+            
+    <xsd:sequence>
+        
+        
+      <xsd:element maxOccurs="1" minOccurs="0" name="nroPlanta" type="xsd:int">
         </xsd:element>
         
         
-      <xsd:element maxOccurs="1" minOccurs="1" name="codLocalidad" type="xsd:int">
+      <xsd:element maxOccurs="1" minOccurs="0" name="codProvincia" type="xsd:int">
+        </xsd:element>
+        
+        
+      <xsd:element maxOccurs="1" minOccurs="0" name="codLocalidad" type="xsd:int">
         </xsd:element>
         
     </xsd:sequence>
@@ -1961,7 +1972,7 @@
     <xsd:sequence>
         
         
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="planta" type="xsd:int">
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="planta" type="tns:PlantaResponse">
         </xsd:element>
         
         
@@ -2949,6 +2960,12 @@
             
       <xsd:maxInclusive value="99999.99"/>
             
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="SolicitanteDestino">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="S"/>
+      <xsd:enumeration value="D"/>
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:element name="DummyResp" type="tns:DummyResponse">
