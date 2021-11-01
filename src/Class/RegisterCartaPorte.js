@@ -83,7 +83,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 	async getLastOrderNumber(data) {
 		let { token, sign } = await this.afip.GetServiceTA('wscpe');
 		const headers = {
-			token, sign, cuitRepresentada: "20273103830"
+			token, sign, cuitRepresentada: this.afip.CUIT
 		}
 		const params = {
 			auth: headers,
@@ -95,7 +95,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
     async createCPE(data) {
         let { token, sign } = await this.afip.GetServiceTA('wscpe');
         const headers = {
-			token, sign, cuitRepresentada: "20273103830"
+			token, sign, cuitRepresentada: this.afip.CUIT
 		}
 		const params = {
 			auth: headers,
@@ -107,7 +107,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 	async anularCPE(data) {
         let { token, sign } = await this.afip.GetServiceTA('wscpe');
         const headers = {
-			token, sign, cuitRepresentada: "20273103830"
+			token, sign, cuitRepresentada: this.afip.CUIT
 		}
 		const params = {
 			auth: headers,
