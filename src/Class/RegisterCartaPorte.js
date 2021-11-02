@@ -83,7 +83,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 	async getLastOrderNumber(data) {
 		let { token, sign } = await this.afip.GetServiceTA('wscpe');
 		const headers = {
-			token, sign, cuitRepresentada: this.afip.CUIT
+			token, sign, cuitRepresentada: data.cuit || this.afip.CUIT
 		}
 		const params = {
 			auth: headers,
