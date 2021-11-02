@@ -85,6 +85,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
 		const headers = {
 			token, sign, cuitRepresentada: data.cuit || this.afip.CUIT
 		}
+		if(data.cuit) delete data.cuit;
 		const params = {
 			auth: headers,
 			solicitud: data,
