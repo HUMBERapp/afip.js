@@ -9,8 +9,8 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
   constructor(afip) {
     const options = {
       soapV12: false,
-      WSDL: 'wscpe-prod.wsdl',
-      URL: 'https://serviciosjava.afip.gob.ar/wscpe/services/soap',
+      WSDL: 'cpea-ws.afip.gob.ar_wscpe_services_soap_wsdl.wsdl',
+      // URL: 'https://serviciosjava.afip.gob.ar/wscpe/services/soap',
       WSDL_TEST: 'wscpe-homo.wsdl',
       URL_TEST: 'https://fwshomo.afip.gov.ar/wscpe/services/soap',
       afip,
@@ -136,7 +136,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
     const headers = {
       token,
       sign,
-      cuitRepresentada: data.cuit || this.afip.CUIT,
+      cuitRepresentada:  data.cuitSolicitante || this.afip.CUIT,
     };
 	delete data.cuit
     const params = {
@@ -201,6 +201,29 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
     console.log(params);
     try {
       return this.executeRequest('consultarPlantas', params);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async consultarCPEPorDestino({ cuit, codPlanta, desde, hasta }) {
+    let { token, sign } = await this.afip.GetServiceTA('wscpe');
+    const headers = {
+      token,
+      sign,
+      cuitRepresentada: cuit || this.afip.CUIT,
+    };
+    const params = {
+      auth: headers,
+      solicitud: {
+        planta: codPlanta,
+        fechaPartidaDesde: desde,
+        fechaPartidaHasta: hasta
+      },
+    };
+    console.log(params);
+    try {
+      return this.executeRequest('consultarCPEPorDestino', params);
     } catch (error) {
       console.error(error);
     }
