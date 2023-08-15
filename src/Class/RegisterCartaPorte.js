@@ -9,7 +9,7 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
   constructor(afip) {
     const options = {
       soapV12: false,
-      WSDL: 'cpea-ws.afip.gob.ar_wscpe_services_soap_wsdl.wsdl',
+      WSDL: 'wscpe-prod.wsdl',
       // URL: 'https://serviciosjava.afip.gob.ar/wscpe/services/soap',
       WSDL_TEST: 'wscpe-homo.wsdl',
       URL_TEST: 'https://fwshomo.afip.gov.ar/wscpe/services/soap',
