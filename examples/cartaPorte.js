@@ -13,7 +13,7 @@ const prod = {
   production: true,
   cert: "cert-prod",
   key: "key-prod",
-  json: "examples/ejemploProd.json"
+  //json: "examples/ejemploProd.json"
 };
 
 const homo = {
@@ -23,9 +23,9 @@ const homo = {
   json: "examples/ejemploTest.json"
 };
 
-const afip = new Afip(homo);
+const afip = new Afip(prod);
 
-const data = JSON.parse(fs.readFileSync(homo.json))
+const data = "";//JSON.parse(fs.readFileSync(prod.json))
 
 async function createCPE() {
   const { respuesta } = await afip.RegisterCartaPorte.createCPE(data);
@@ -54,15 +54,25 @@ async function anularCPE() {
 
 async function consultarCPE() {
   const data = {
-    cuitSolicitante: 20111111112,
-    cartaPorte: {
-      tipoCPE: 74,
-      sucursal: 1,
-      nroOrden: 500,
-    },
+    cuitSolicitante: 30715441205,
+    nroCTG: 30012723193
   };
   console.log(`ejecutando consulta para`, data);
   const { respuesta } = await afip.RegisterCartaPorte.consultarCPE(data);
+  let { errores } = respuesta;
+  console.log(respuesta);
+  if (errores) {
+    console.error(errores);
+  }
+}
+
+async function consultarCPEDG() {
+  const data = {
+    cuitSolicitante: 30715441205,
+    nroCTG: 30012723193
+  };
+  console.log(`ejecutando consulta para`, data);
+  const { respuesta } = await afip.RegisterCartaPorte.consultarCPEDG(data);
   let { errores } = respuesta;
   console.log(respuesta);
   if (errores) {
@@ -107,11 +117,12 @@ async function getPlants() {
   console.log(respuesta.errores);
 }
 
-// getProvinces();
+//getProvinces();
 //getCities();
 //getLastOrderNumber();
- createCPE();
+//createCPE();
 //anularCPE();
 //consultarCPE();
+consultarCPEDG();
 //getGrainTypes();
 //getPlants();

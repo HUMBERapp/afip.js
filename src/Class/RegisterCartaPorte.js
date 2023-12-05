@@ -10,9 +10,9 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
     const options = {
       soapV12: false,
       WSDL: 'wscpe-prod.wsdl',
-      // URL: 'https://serviciosjava.afip.gob.ar/wscpe/services/soap',
+      URL: 'https://cpea-ws.afip.gob.ar/wscpe/services/soap',
       WSDL_TEST: 'wscpe-homo.wsdl',
-      URL_TEST: 'https://fwshomo.afip.gov.ar/wscpe/services/soap',
+      URL_TEST: 'https://cpea-ws-qaext.afip.gob.ar/wscpe/services/soap',
       afip,
     };
 
@@ -144,6 +144,21 @@ module.exports = class RegisterCartaPorte extends AfipWebService {
       solicitud: data,
     };
     return this.executeRequest('consultarCPEAutomotor', params);
+  }
+
+  async consultarCPEDG(data) {
+    let { token, sign } = await this.afip.GetServiceTA('wscpe');
+    const headers = {
+      token,
+      sign,
+      cuitRepresentada:  data.cuitSolicitante || this.afip.CUIT,
+    };
+	delete data.cuit
+    const params = {
+      auth: headers,
+      solicitud: data,
+    };
+    return this.executeRequest('consultarCPEAutomotorDG', params);
   }
 
   async consultarCPEPendientesDeResolucion(data) {
