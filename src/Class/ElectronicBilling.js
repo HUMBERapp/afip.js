@@ -1,4 +1,5 @@
 const AfipWebService = require('./AfipWebService');
+const AfipWebServiceError = require('./AfipWebServiceError');
 
 /**
  * SDK for AFIP Electronic Billing (wsfe1)
@@ -16,7 +17,33 @@ module.exports = class ElectronicBilling extends AfipWebService {
 			afip
 		}
 
-		super(options);
+		super(options, { service: 'wsfe' });
+	}
+
+	/**
+	 * Create PDF 
+	 * 
+	 * Send a request to Afip SDK server to create a PDF
+	 *
+	 * @param {object} data Data for PDF creation
+	 **/
+	async createPDF(data)
+	{
+		try {
+			const { data: { file, file_name } } = await this.afip.AdminClient.post('v1/pdfs', data);
+
+			return { file, file_name };
+		} catch (error) {
+			if (!error.response) {
+				throw error;
+			}
+			else if (error.response.data && error.response.data.message) {
+				throw Object.assign(new Error(error.response.data.message), error.response.data);
+			}
+			else {
+				throw Object.assign(new Error(error.response.statusText), error.response);
+			}
+		}
 	}
 
 	/**
@@ -59,6 +86,9 @@ module.exports = class ElectronicBilling extends AfipWebService {
 	 * 	AFIP {@see WS Specification item 4.1.3}
 	 **/
 	async createVoucher(data, returnResponse = false) {
+		// Reassign data to avoid modify te original object
+		data = Object.assign({}, data);
+
 		const req = {
 			'FeCAEReq' : {
 				'FeCabReq' : {
@@ -158,9 +188,45 @@ module.exports = class ElectronicBilling extends AfipWebService {
 		};
 
 		const result = await this.executeRequest('FECompConsultar', req)
-		.catch(err => { if (err.code === 602) { return null } else { throw err }});
+		.catch(err => { if (err.code === 602) { return { ResultGet: null } } else { throw err }});
 
 		return result.ResultGet;
+	}
+
+	/**
+	 * Create CAEA 
+	 * 
+	 * Send a request to AFIP servers  to create a CAEA
+	 *
+	 * @param int period 	Time period
+	 * @param int fortnight	Monthly fortnight (1 or 2)
+	 **/
+	async createCAEA(period, fortnight)
+	{
+		const req = {
+			'Periodo': period,
+			'Orden': fortnight
+		};
+
+		return (await this.executeRequest('FECAEASolicitar', req)).ResultGet;
+	}
+
+	/**
+	 * Get CAEA 
+	 * 
+	 * Ask to AFIP servers for a CAEA information
+	 *
+	 * @param int period 	Time period
+	 * @param int fortnight	Monthly fortnight (1 or 2)
+	 **/
+	async getCAEA(period, fortnight)
+	{
+		const req = {
+			'Periodo': period,
+			'Orden': fortnight
+		};
+
+		return (await this.executeRequest('FECAEAConsultar', req)).ResultGet;
 	}
 
 	/**
@@ -324,9 +390,12 @@ module.exports = class ElectronicBilling extends AfipWebService {
 	{
 		const res = results[operation+'Result'];
 
-
-		if (operation === 'FECAESolicitar') {
+		if (operation === 'FECAESolicitar' && res.FeDetResp) {
 			if (Array.isArray(res.FeDetResp.FECAEDetResponse)) {
+				if (res.FeDetResp.FECAEDetResponse.length > 1) {
+					return;
+				}
+
 				res.FeDetResp.FECAEDetResponse = res.FeDetResp.FECAEDetResponse[0];
 			}
 			
@@ -337,7 +406,7 @@ module.exports = class ElectronicBilling extends AfipWebService {
 
 		if (res.Errors) {
 			const err = Array.isArray(res.Errors.Err) ? res.Errors.Err[0] : res.Errors.Err;
-			throw new Error(`(${err.Code}) ${err.Msg}`, err.Code);
+			throw new AfipWebServiceError(`(${err.Code}) ${err.Msg}`, err.Code);
 		}
 	}
 

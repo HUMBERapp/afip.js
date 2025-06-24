@@ -1,22 +1,20 @@
 const AfipWebService = require('./AfipWebService');
 
 /**
- * SDK for AFIP Register Scope Thirteen (ws_sr_padron_a13)
- * 
- * @link http://www.afip.gob.ar/ws/ws-padron-a13/manual-ws-sr-padron-a13-v1.2.pdf WS Specification
+ * SDK for AFIP Register Inscription Proof (ws_sr_constancia_inscripcion)
  **/
-module.exports = class RegisterScopeThirteen extends AfipWebService {
+module.exports = class RegisterInscriptionProof extends AfipWebService {
 	constructor(afip){
 		const options = {
 			soapV12: false,
-			WSDL: 'ws_sr_padron_a13-production.wsdl',
-			URL: 'https://aws.afip.gov.ar/sr-padron/webservices/personaServiceA13',
-			WSDL_TEST: 'ws_sr_padron_a13.wsdl',
-			URL_TEST: 'https://awshomo.afip.gov.ar/sr-padron/webservices/personaServiceA13',
+			WSDL: 'ws_sr_padron_a5-production.wsdl',
+			URL: 'https://aws.afip.gov.ar/sr-padron/webservices/personaServiceA5',
+			WSDL_TEST: 'ws_sr_padron_a5.wsdl',
+			URL_TEST: 'https://awshomo.afip.gov.ar/sr-padron/webservices/personaServiceA5',
 			afip
 		}
 
-		super(options, { service: 'ws_sr_padron_a13' });
+		super(options, { service: 'ws_sr_constancia_inscripcion' });
 	}
 	/**
 	 * Asks to web service for servers status {@see WS 
@@ -37,12 +35,12 @@ module.exports = class RegisterScopeThirteen extends AfipWebService {
 	 * @throws Exception if exists an error in response 
 	 *
 	 * @return object|null if taxpayer does not exists, return null,  
-	 * if it exists, returns idPersona property of response {@see 
+	 * if it exists, returns full response {@see 
 	 * WS Specification item 3.2.2}
 	 **/
 	async getTaxpayerDetails(identifier) {
 		// Get token and sign
-		let { token, sign } = await this.afip.GetServiceTA('ws_sr_padron_a13');
+		let { token, sign } = await this.afip.GetServiceTA('ws_sr_constancia_inscripcion');
 
 		// Prepare SOAP params
 		let params = {
@@ -51,33 +49,31 @@ module.exports = class RegisterScopeThirteen extends AfipWebService {
 			idPersona: identifier
 		};
 		
-		return this.executeRequest('getPersona', params)
-		.then(res => res.persona)
+		return this.executeRequest('getPersona_v2', params)
+		.then(res => res)
 		.catch(err => { if (err.message.indexOf('No existe') !== -1) { return null } else { throw err }});
 	}
 
 	/**
-	 * Asks to web service for tax id by document number
+	 * Asks to web service for taxpayers details
 	 *
 	 * @throws Exception if exists an error in response 
 	 *
-	 * @return object|null if taxpayer does not exists, return null,  
-	 * if it exists, returns idPersona property of response
+	 * @return [object] returns web service full response
 	 **/
-	async getTaxIDByDocument(documentNumber) {
+	async getTaxpayersDetails(identifiers) {
 		// Get token and sign
-		let { token, sign } = await this.afip.GetServiceTA('ws_sr_padron_a13');
+		let { token, sign } = await this.afip.GetServiceTA('ws_sr_constancia_inscripcion');
 
 		// Prepare SOAP params
 		let params = {
 			token, sign,
 			cuitRepresentada: this.afip.CUIT,
-			documento: documentNumber
+			idPersona: identifiers
 		};
 		
-		return this.executeRequest('getIdPersonaListByDocumento', params)
-		.then(res => res.idPersona)
-		.catch(err => { if (err.message.indexOf('No existe') !== -1) { return null } else { throw err }});
+		return this.executeRequest('getPersonaList_v2', params)
+		.then(res => res.persona);
 	}
 
 	/**
@@ -93,8 +89,8 @@ module.exports = class RegisterScopeThirteen extends AfipWebService {
 		let results = await super.executeRequest(operation, params);
 
 		return results[
-			operation === 'getPersona' ? 'personaReturn' :
-				(operation === 'getIdPersonaListByDocumento' ? 'idPersonaListReturn': 'return')
+			operation === 'getPersona_v2' ? 'personaReturn' :
+				(operation === 'getPersonaList_v2' ? 'personaListReturn': 'return')
 			];
 	}
 }
