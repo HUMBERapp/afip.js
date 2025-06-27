@@ -1,6 +1,6 @@
 {
   "name": "@humberapp/afip.js",
-  "version": "0.9.0",
+  "version": "1.1.3p",
   "description": "Libreria para usar los Web Services de AFIP con JavaScript",
   "main": "src/Afip.js",
   "scripts": {
@@ -16,5 +16,10 @@
   },
   "engines": {
     "node": ">=7.0"
+  },
+  "types": "./types/Afip.d.ts",
+  "devDependencies": {
+    "@types/bluebird": "^3.5.38",
+    "@types/node": "^20.1.4"
   }
 }

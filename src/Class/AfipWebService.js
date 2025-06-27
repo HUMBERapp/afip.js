@@ -1,11 +1,11 @@
-const soap = require('soap');
 const path = require('path');
+
 
 /**
  * Base class for AFIP web services 
  **/ 
 module.exports = class AfipWebService {
-	constructor(webServiceOptions){
+	constructor(webServiceOptions, options = {}){
 		if (!webServiceOptions) {
 			throw new Error('Missing Web Service Object');
 		}
@@ -53,40 +53,79 @@ module.exports = class AfipWebService {
 		 **/
 		this.afip = webServiceOptions.afip;
 		
-		if (this.afip.options['production']) {
-			this.WSDL = path.resolve(__dirname, '../Afip_res', this.WSDL);
+		/**
+		 * Options
+		 * 
+		 * @var object
+		 **/
+		this.options = options;
+
+		if (options['WSDL']) {
+			this.WSDL = options['WSDL'];
 		}
-		else{
-			this.WSDL = path.resolve(__dirname, '../Afip_res', this.WSDL_TEST);
-			this.URL = this.URL_TEST;
+
+		if (options['URL']) {
+			this.URL = options['URL'];
 		}
+
+		if (options['WSDL_TEST']) {
+			this.WSDL_TEST = options['WSDL_TEST'];
+		}
+
+		if (options['URL_TEST']) {
+			this.URL_TEST = options['URL_TEST'];
+		}
+
+		if (options['generic'] === true) {
+			if (typeof options['service'] === 'undefined') {
+				throw new Error("service field is required in options");
+			}
+
+			if (typeof options['soapV1_2'] === 'undefined') {
+				options['soapV1_2'] = true;
+			}
+
+			this.soapv12 = options['soapV1_2']
+		}
+	}
+
+	/**
+	 * Get Web Service Token Authorization from WSAA
+	 * 
+	 * @param {boolean} force Force to create a new token 
+	 * authorization even if it is not expired
+	 * 
+	 * @throws Error if an error occurs
+	 *
+	 * @return TokenAuthorization Token Authorization for AFIP Web Service 
+	 **/
+	async getTokenAuthorization(force = false)
+	{
+		return this.afip.GetServiceTA(this.options['service'], force);
 	}
 
 	/**
 	 * Send request to AFIP servers
 	 * 
-	 * @param operation SOAP operation to execute 
-	 * @param params Parameters to send
+	 * @param {string} method SOAP operation to execute 
+	 * @param {any} params Parameters to send
 	 **/
-	async executeRequest(operation, params = {}) {
-		// Create SOAP client
-		if (!this.soapClient) {
-			let soapClientOptions = { 
-				disableCache: true, 
-				forceSoap12Headers: this.soapv12
-			};
+	async executeRequest(method, params = {}) {
+		// Prepare data to for request
+		const data = {
+			method,
+			params,
+			environment: this.afip.options['production'] === true ? "prod" : "dev",
+			wsid: this.options['service'],
+			url: this.afip.options['production'] === true ? this.URL : this.URL_TEST,
+			wsdl: this.afip.options['production'] === true ? this.WSDL : this.WSDL_TEST,
+			soap_v_1_2: this.soapv12
+		};
 
-			this.soapClient = await soap.createClientAsync(this.WSDL, soapClientOptions);
+		// Execute request
+		const result = await this.afip.AdminClient.post('v1/afip/requests', data);
 
-			/* Sobre escribir la URL del archivo .wsdl */
-			this.soapClient.setEndpoint(this.URL);
-		}
-
-		// Call to SOAP method
-		let response = await this.soapClient[operation+'Async'](params);
-		//console.log("results", response);
-		
-		//Return response parsed as JSON
-		return response[0];
+		//Return response
+		return result.data;
 	}
 }
